@@ -13,7 +13,7 @@ contract SavingPool {
     uint256 endDate;
     uint256 totalDeposit;
     mapping(address => uint256) public balances;
-    string public purpose = "El primero";
+    string public purpose = "Holis!";
 
     // the polygon mainnet AAVE v3 lending pool
     IPool pool = IPool(0x794a61358D6845594F94dc1DB02A252b5b4814aD);

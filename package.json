@@ -1,0 +1,32 @@
+{
+  "name": "alternative-saving",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "hardhat deploy --export-all ./frontend/src/contracts/hardhat_contracts.json",
+    "accounts": "hardhat accounts",
+    "chain": "npx hardhat node --network hardhat --no-deploy",
+    "generate": "hardhat generate",
+    "account": "hardhat account",
+    "etherscan-verify": "hardhat etherscan-verify --api-key 1CP5KRVI3E3UT95AZP9TVU94KC7FS32Q2H",
+    "fork": "hardhat node --no-deploy --network hardhat --fork https://mainnet.infura.io/v3/9acd693f34804a00ae21c78d37669ea1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
+    "@nomiclabs/hardhat-waffle": "^2.0.0",
+    "chai": "^4.2.0",
+    "ethereum-waffle": "^3.0.0",
+    "ethers": "^5.6.5",
+    "hardhat": "^2.9.6",
+    "hardhat-deploy": "^0.11.4"
+  },
+  "dependencies": {
+    "@aave/core-v3": "^1.13.1",
+    "@nomiclabs/hardhat-etherscan": "^3.0.3",
+    "@openzeppelin/contracts": "^4.6.0",
+    "dotenv": "^16.0.0"
+  }
+}

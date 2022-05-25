@@ -36,10 +36,29 @@ contract SavingPool {
     }
 
     function depositDai(uint256 _amount) public returns (bool success) {
+        require(
+            (block.timestamp <= startDate),
+            "Inscripcion no disponible, inversion en curso"
+        );
+        require((_amount > 0), "Amount must be greater than 0");
+
+        success = dai.transferFrom(msg.sender, address(this), _amount);
+        require(success, "Failed to transfer DAI");
+        balances[msg.sender] += _amount;
+
         return success;
     }
 
-    function transferFundsToPool() public {}
+    function transferFundsToPool() public {
+        require(msg.sender == owner, "Only owner can transfer funds to pool");
+        require(block.timestamp > startDate, "Inscripcion aun abierta");
+
+        totalDeposit = dai.balanceOf(address(this));
+
+        dai.approve(address(pool), totalDeposit);
+        pool.supply(address(dai), totalDeposit, address(this), 0);
+        endDate = block.timestamp + 21 seconds;
+    }
 
     function getInterestRate()
         public
@@ -47,7 +66,24 @@ contract SavingPool {
         returns (DataTypes.ReserveData memory reserveData)
     {}
 
-    function withdraw() public {}
+    function withdraw() public {
+        require(msg.sender == owner, "Only owner can withdraw");
+        require(block.timestamp > endDate, "Inversion aun en curso");
+        aDai.approve(address(pool), type(uint256).max);
+        pool.withdraw(address(dai), type(uint256).max, address(this));
+    }
 
-    function reclaimInteret() public {}
+    function reclaimInteret() public {
+        require(block.timestamp > endDate, "Inversion aun en curso");
+        require(
+            dai.balanceOf(address(this)) > 0,
+            "No hay intereses a reclamar"
+        );
+        uint256 sharePercent = balances[msg.sender] / totalDeposit;
+        uint256 depositPlusInterest = sharePercent *
+            dai.balanceOf(address(this));
+
+        console.log("Deposito", sharePercent, "Interes:", depositPlusInterest);
+        dai.transfer(msg.sender, depositPlusInterest);
+    }
 }

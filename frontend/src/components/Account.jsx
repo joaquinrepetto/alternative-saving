@@ -3,6 +3,7 @@ import React from "react";
 import Address from "./Address";
 import Balance from "./Balance";
 import Wallet from "./Wallet";
+import TokenBalance from "./TokenBalance";
 
 /*
   ~ What it does? ~
@@ -53,6 +54,7 @@ export default function Account({
   logoutOfWeb3Modal,
   blockExplorer,
   isContract,
+  daiContract,
 }) {
   function isValidAddress(address) {
     return address && address !== "0x0000000000000000000000000000000000000000";
@@ -100,7 +102,13 @@ export default function Account({
               blockExplorer={blockExplorer}
             />
           )}
-          <Balance address={address} provider={localProvider} price={price} />
+          {/* <Balance address={address} provider={localProvider} price={price} /> */}
+          <TokenBalance
+            address={address}
+            provider={localProvider}
+            price={price}
+            daiContract={daiContract}
+          />
           <Wallet
             address={address}
             provider={localProvider}
@@ -121,7 +129,13 @@ export default function Account({
               blockExplorer={blockExplorer}
             />
           )}
-          <Balance address={address} provider={localProvider} price={price} />
+          {/* <Balance address={address} provider={localProvider} price={price} /> */}
+          <TokenBalance
+            address={address}
+            provider={localProvider}
+            price={price}
+            daiContract={daiContract}
+          />
         </>
       ) : (
         ""
@@ -133,7 +147,13 @@ export default function Account({
             ensProvider={mainnetProvider}
             blockExplorer={blockExplorer}
           />
-          <Balance address={address} provider={localProvider} price={price} />
+          {/* <Balance address={address} provider={localProvider} price={price} /> */}
+          <TokenBalance
+            address={address}
+            provider={localProvider}
+            price={price}
+            daiContract={daiContract}
+          />
           <Wallet
             address={address}
             provider={localProvider}

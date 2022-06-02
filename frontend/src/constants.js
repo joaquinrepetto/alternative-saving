@@ -7,7 +7,7 @@ export const ETHERSCAN_KEY = "DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW";
 // BLOCKNATIVE ID FOR Notify.js:
 export const BLOCKNATIVE_DAPPID = "0b58206a-f3c0-4701-a62f-73c7243e8c77";
 
-export const ALCHEMY_KEY = "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
+export const ALCHEMY_KEY = "KXB-g5sGDYvy_KW_wCkbl41WWxLQqj65";
 
 export const NETWORKS = {
   localhost: {
@@ -15,7 +15,10 @@ export const NETWORKS = {
     color: "#666666",
     chainId: 31337,
     blockExplorer: "",
-    rpcUrl: "http://" + (global.window ? window.location.hostname : "localhost") + ":8545",
+    rpcUrl:
+      "http://" +
+      (global.window ? window.location.hostname : "localhost") +
+      ":8545",
   },
   mainnet: {
     name: "mainnet",
@@ -120,14 +123,20 @@ export const NETWORKS = {
     color: "#f01a37",
     chainId: 31337,
     blockExplorer: "",
-    rpcUrl: "http://" + (global.window ? window.location.hostname : "localhost") + ":9545",
+    rpcUrl:
+      "http://" +
+      (global.window ? window.location.hostname : "localhost") +
+      ":9545",
   },
   localOptimism: {
     name: "localOptimism",
     color: "#f01a37",
     chainId: 420,
     blockExplorer: "",
-    rpcUrl: "http://" + (global.window ? window.location.hostname : "localhost") + ":8545",
+    rpcUrl:
+      "http://" +
+      (global.window ? window.location.hostname : "localhost") +
+      ":8545",
     gasPrice: 0,
   },
   kovanOptimism: {
@@ -187,7 +196,7 @@ export const NETWORKS = {
   },
 };
 
-export const NETWORK = chainId => {
+export const NETWORK = (chainId) => {
   for (const n in NETWORKS) {
     if (NETWORKS[n].chainId === chainId) {
       return NETWORKS[n];

@@ -6,7 +6,7 @@ import { utils } from "ethers";
 export default function TokenBalance(props) {
   const [dollarMode, setDollarMode] = useState(true);
 
-  const tokenContract = props.contracts && props.contracts[props.name];
+  const tokenContract = props.daiContract && props.daiContract;
   const balance = useTokenBalance(tokenContract, props.address, 1777);
 
   let floatBalance = parseFloat("0.00");

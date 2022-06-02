@@ -25,22 +25,22 @@ const web3Modal = Web3ModalSetup();
 
 // 🛰 providers
 const providers = [
-  "https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
-  `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}`,
-  "https://rpc.scaffoldeth.io:48544",
+  // "https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
+  // `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+  // "https://rpc.scaffoldeth.io:48544",
+  `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
 ];
 
 function Main() {
   const networkOptions = [initialNetwork.name, "mainnet", "rinkeby"];
 
   const [injectedProvider, setInjectedProvider] = useState();
-  const [address, setAddress] = useState();
+  const [address, setAddress] = useState("");
+  const [newPurpose, setNewPurpose] = useState("");
+  const [balance, setBalance] = useState();
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
 
   const targetNetwork = NETWORKS[selectedNetwork];
-
-  // 🔭 block explorer URL
-  const blockExplorer = targetNetwork.blockExplorer;
 
   // load all your providers
   const localProvider = useStaticJsonRPC([
@@ -52,8 +52,8 @@ function Main() {
 
   if (DEBUG) console.log(`Using ${selectedNetwork} network`);
 
-  // 🛰 providers
-  if (DEBUG) console.log("📡 Connecting to Mainnet Ethereum");
+  // 🔭 block explorer URL
+  const blockExplorer = targetNetwork.blockExplorer;
 
   const logoutOfWeb3Modal = async () => {
     await web3Modal.clearCachedProvider();
@@ -79,6 +79,7 @@ function Main() {
     async function getAddress() {
       if (userSigner) {
         const newAddress = await userSigner.getAddress();
+        console.log(`New address: ${newAddress}`);
         setAddress(newAddress);
       }
     }
@@ -104,18 +105,31 @@ function Main() {
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, contractConfig);
 
-  const mainnetContracts = useContractLoader(mainnetProvider, contractConfig);
+  const abi = [
+    {
+      inputs: [{ internalType: "address", name: "account", type: "address" }],
+      name: "balanceOf",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "view",
+      type: "function",
+    },
+  ];
 
-  // Then read your DAI balance like:
-  const myMainnetDAIBalance = useContractReader(
-    mainnetContracts,
-    "DAI",
-    "balanceOf",
-    ["0x34aA3F359A9D614239015126635CE7732c18fDF3"]
+  const daiContract = new ethers.Contract(
+    "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+    abi,
+    userSigner
   );
 
   // keep track of a variable from the contract in the local React state:
   const purpose = useContractReader(readContracts, "SavingPool", "purpose");
+  console.log(`purpose: ${purpose}, newPurpose: ${newPurpose}`);
+
+  useEffect(() => {
+    if (purpose) {
+      setNewPurpose(purpose);
+    }
+  }, [purpose]);
 
   const loadWeb3Modal = useCallback(async () => {
     const provider = await web3Modal.connect();
@@ -144,7 +158,76 @@ function Main() {
     }
   }, [loadWeb3Modal]);
 
-  return <div>asd</div>;
+  return (
+    <div style={{ backgroundColor: "#201D1F", minHeight: "100vh" }}>
+      <div
+        style={{
+          position: "fixed",
+          textAlign: "right",
+          right: 0,
+          top: 0,
+          padding: 10,
+        }}
+      >
+        <Account
+          address={address}
+          localProvider={localProvider}
+          userSigner={userSigner}
+          mainnetProvider={mainnetProvider}
+          web3Modal={web3Modal}
+          loadWeb3Modal={loadWeb3Modal}
+          logoutOfWeb3Modal={logoutOfWeb3Modal}
+          blockExplorer={blockExplorer}
+          daiContract={daiContract}
+        />
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          left: "50%",
+          top: "20%",
+        }}
+      >
+        <h1 style={{ color: "white" }}>
+          Proposito:{" "}
+          <input
+            style={{ color: "black" }}
+            value={newPurpose}
+            onChange={(e) => setNewPurpose(e.target.value)}
+          ></input>
+        </h1>
+        <button
+          onClick={async () => {
+            const result = tx(
+              writeContracts.SavingPool.setPurpose(newPurpose),
+              (update) => {
+                console.log("📡 Transaction Update:", update);
+                if (
+                  update &&
+                  (update.status === "confirmed" || update.status === 1)
+                ) {
+                  console.log(" 🍾 Transaction " + update.hash + " finished!");
+                  console.log(
+                    " ⛽️ " +
+                      update.gasUsed +
+                      "/" +
+                      (update.gasLimit || update.gas) +
+                      " @ " +
+                      parseFloat(update.gasPrice) / 1000000000 +
+                      " gwei"
+                  );
+                }
+              }
+            );
+            console.log("awaiting metamask/web3 confirm result...", result);
+            console.log(await result);
+          }}
+        >
+          Modificar proposito
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default Main;
